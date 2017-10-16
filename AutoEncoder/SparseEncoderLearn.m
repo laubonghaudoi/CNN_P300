@@ -1,12 +1,12 @@
 function W = SparseEncoderLearn(trainFeatures,visibleSize,hiddenSize,opt)
 fprintf('Learning features with sparse auto encoder, max iteration %d \n',opt.maxIteration);
 
-%´ÓÑù±¾ÖĞËæ»úÑ¡È¡numPatches¸ö1*nChannelµÄpatchÓÃ×÷Ï¡Êè×Ô±àÂëÆ÷ÊäÈë£¬ÒÔÑµÁ·³ö¾í»ıºË
+%ä»æ ·æœ¬ä¸­éšæœºé€‰å–numPatchesä¸ª1*nChannelçš„patchç”¨ä½œç¨€ç–è‡ªç¼–ç å™¨è¾“å…¥ï¼Œä»¥è®­ç»ƒå‡ºå·ç§¯æ ¸
 patches=SamplePatches(trainFeatures,opt.numPatches);%numPatches*visibleSize 10000*12
 
 theta=SparseEncoderInitParam(visibleSize,hiddenSize);
 
-%¿ªÊ¼µü´úÑ§Ï°
+%å¼€å§‹è¿­ä»£å­¦ä¹ 
 addpath minFunc/;
 options.Method = 'lbfgs'; 
 options.maxIter = opt.maxIteration;

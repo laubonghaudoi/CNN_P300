@@ -1,40 +1,40 @@
 function [trainSamples,trainLabels]=ExtractData(rawSignal,event)
-%% ÌØÕ÷ÌáÈ¡²ÎÊýÉè¶¨
-trialStartPoints = find(event.type>=41 & event.type<=80); % 30*1 30´Îtrial¿ªÊ¼µÄÊ±¼äµã£¨Î»ÖÃÖµ£©£¬401*n+1~11630
-numTrials = length(trialStartPoints)-1; % ×îºóÒ»¸ö×Ö·ûÒòÎª²ÉÑù²»ÍêÕûÉáÆú£¬Ö»ÓÃ29¸ö
-numEpochs = 40; % ÆÁÄ»ÉÏ×Ü¹²40¸ö×Ö·û
-numRounds = round( (trialStartPoints(2)-trialStartPoints(1))/numEpochs ); % Ã¿¸ö×Ö·ûÖØ¸´10´Î
-epochLength = 150; % Ê±¼ä´°Îª150¸ö²ÉÑùµã
+%% ç‰¹å¾æå–å‚æ•°è®¾å®š
+trialStartPoints = find(event.type>=41 & event.type<=80); % 30*1 30æ¬¡trialå¼€å§‹çš„æ—¶é—´ç‚¹ï¼ˆä½ç½®å€¼ï¼‰ï¼Œ401*n+1~11630
+numTrials = length(trialStartPoints)-1; % æœ€åŽä¸€ä¸ªå­—ç¬¦å› ä¸ºé‡‡æ ·ä¸å®Œæ•´èˆå¼ƒï¼Œåªç”¨29ä¸ª
+numEpochs = 40; % å±å¹•ä¸Šæ€»å…±40ä¸ªå­—ç¬¦
+numRounds = round( (trialStartPoints(2)-trialStartPoints(1))/numEpochs ); % æ¯ä¸ªå­—ç¬¦é‡å¤10æ¬¡
+epochLength = 150; % æ—¶é—´çª—ä¸º150ä¸ªé‡‡æ ·ç‚¹
 
 filterCoefB = [0.0083   -0.0260    0.0464   -0.0551    0.0580   -0.0551    0.0464   -0.0260    0.0083];
 filterCoefA = [1.0000   -5.0983   11.7635  -15.9105   13.7377   -7.7295    2.7616   -0.5718    0.0525];
 
-channelSelected = [9 14 19 24 28:32 34:36]; % NuAmpsµÄÍ¨µÀÑ¡Ôñ
-numChannels = length(channelSelected); % ¹²12¸öÍ¨µÀ
+channelSelected = [9 14 19 24 28:32 34:36]; % NuAmpsçš„é€šé“é€‰æ‹©
+numChannels = length(channelSelected); % å…±12ä¸ªé€šé“
 
 timeWindowLeft = 25;
 timeWindowRight = 125;
 timeWindow = timeWindowRight - timeWindowLeft;
 
-%% ¶ÁÈ¡Êý¾Ý²¢ÂË²¨
-% trainFeatureMaps,trainLabelsÎªÌáÈ¡³öµÄÑµÁ·Ñù±¾¼°±êÇ©Öµ
-trainSamples = zeros(numTrials*numRounds*numEpochs, timeWindow, numChannels); % (29*10*40)*20*12=11600*100*12 11600¸ö¾í»ýÑµÁ·Ñù±¾
+%% è¯»å–æ•°æ®å¹¶æ»¤æ³¢
+% trainFeatureMaps,trainLabelsä¸ºæå–å‡ºçš„è®­ç»ƒæ ·æœ¬åŠæ ‡ç­¾å€¼
+trainSamples = zeros(numTrials*numRounds*numEpochs, timeWindow, numChannels); % (29*10*40)*20*12=11600*100*12 11600ä¸ªå·ç§¯è®­ç»ƒæ ·æœ¬
 trainLabels = zeros(numTrials*numRounds*numEpochs, 1); % (29*10*40)*1=11600*1
 
 targetChars = zeros(numTrials, 1);
 
 disp('Extracting features...');
-% Èý²ãforÑ­»··Ö±ðÎª 1-29 trials * 1-10 rounds * 1-40 epochs
+% ä¸‰å±‚forå¾ªçŽ¯åˆ†åˆ«ä¸º 1-29 trials * 1-10 rounds * 1-40 epochs
 for trial_Iter = 1:numTrials
     targetChars(trial_Iter) = event.type( trialStartPoints(trial_Iter) )-40;
     for round_Iter = 1:numRounds
         for epoch_Iter = trialStartPoints(trial_Iter) + (round_Iter - 1)*numEpochs + 1 : trialStartPoints(trial_Iter) + round_Iter*numEpochs
-            % °ÑÕâÒ»Ê±¿ÌÆÁÄ»ËùÉÁ×Ö·û¼°36¸öÆµµÀµÄÐÅºÅÖµÌáÈ¡
+            % æŠŠè¿™ä¸€æ—¶åˆ»å±å¹•æ‰€é—ªå­—ç¬¦åŠ36ä¸ªé¢‘é“çš„ä¿¡å·å€¼æå–
             flashingCode = event.type(epoch_Iter);
             signalEpoch = rawSignal(event.pos(epoch_Iter):event.pos(epoch_Iter)+epochLength-1, :)';%36*150
             
             if (flashingCode > 0 && flashingCode <= numEpochs)
-                signalEpoch = signalEpoch(:,timeWindowLeft+1:timeWindowRight);%36*100 È¡ÖÐ¼äÊ±¼ä´°
+                signalEpoch = signalEpoch(:,timeWindowLeft+1:timeWindowRight);%36*100 å–ä¸­é—´æ—¶é—´çª—
                 %signalDebased = signalEpoch - kron(mean(signalEpoch(:,2:24),2), ones(1, size(signalEpoch,2)) );
                 signalFiltered = filter( filterCoefB, filterCoefA, signalEpoch(channelSelected, :)',[],1);%100*12
                 trainSamples( (trial_Iter-1)*numRounds*numEpochs + (round_Iter-1)*numEpochs + flashingCode, :, :) = signalFiltered; %11600*100*12
@@ -45,21 +45,21 @@ for trial_Iter = 1:numTrials
     end
 end
 
-%% È¥³ýÂ©±êÇé¿ö²¢±ê×¼»¯ÌáÈ¡³öµÄÊý¾Ý
+%% åŽ»é™¤æ¼æ ‡æƒ…å†µå¹¶æ ‡å‡†åŒ–æå–å‡ºçš„æ•°æ®
 featureDim1 = size(trainSamples, 2);
 featureDim2 = size(trainSamples, 3);
 trainSamples = reshape(trainSamples, size(trainSamples,1), []); % 11600*1200
 
-trainLabels( all(trainSamples==0, 2) ) = []; % Èç¹ûÓÐÄ³Ò»ÌØÕ÷È«Îª0£¬ÔòÈ¥³ý
+trainLabels( all(trainSamples==0, 2) ) = []; % å¦‚æžœæœ‰æŸä¸€ç‰¹å¾å…¨ä¸º0ï¼Œåˆ™åŽ»é™¤
 trainSamples( all(trainSamples==0, 2), :) = []; % 11600*1200
 
-% ¹éÒ»»¯
+% å½’ä¸€åŒ–
 trainSamples = zscore(trainSamples')';
 
-% »Ö¸´Ô­½á¹¹
+% æ¢å¤åŽŸç»“æž„
 trainSamples = reshape(trainSamples, size(trainSamples, 1), featureDim1, featureDim2); % 11600*100*12
 
-% µ÷ÕûÊý¾Ý½á¹¹ÒÔÊäÈëCNN
+% è°ƒæ•´æ•°æ®ç»“æž„ä»¥è¾“å…¥CNN
 trainSamples = permute(trainSamples, [2 3 1]); % 100*12*11600
 trainLabels = [trainLabels'; ~trainLabels']; % 2*11600
 end

@@ -1,4 +1,4 @@
-%%  CNN测试函数
+%%  CNN娴嬭瘯鍑芥暟
 % 
 % 
 % 
@@ -14,7 +14,7 @@ for sample_Iter = 1:size(X, 3)
     batchY = Y(:, sample_Iter);
     state = Y(1, sample_Iter);
     
-    % 前馈得到预测结果
+    % 鍓嶉寰楀埌棰勬祴缁撴灉
     net = CNNFeedforward(net, batchX, batchY);
     net.testOutput(:, sample_Iter) = net.layers{5}.a;
     net.testLabel(:, sample_Iter) = Y(:, sample_Iter);
@@ -25,7 +25,7 @@ for sample_Iter = 1:size(X, 3)
         net.isP300(sample_Iter) = 0;
     end
     
-    % 计算ROC曲线
+    % 璁＄畻ROC鏇茬嚎
     if (net.isP300(sample_Iter) == 1)&&(state == 1)
         numTP = numTP + 1;
         net.TPindex(numTP) = sample_Iter; 

@@ -1,20 +1,20 @@
-%% CNNÎó²î·´´«º¯Êı
-% BPÔ­Àí²Î¼ûUFLDL·´Ïò´«µ¼Ëã·¨
+%% CNNè¯¯å·®åä¼ å‡½æ•°
+% BPåŸç†å‚è§UFLDLåå‘ä¼ å¯¼ç®—æ³•
 %
-% ¸÷²ã¼¤»îÖµ
+% å„å±‚æ¿€æ´»å€¼
 %    L1 net.layers{2}.a 10*100
 %    L2 net.layers{3}.a {50} 1*5
 %    L3 net.layers{4}.a 100*1
 %    L4 net.layers{5}.a 2*1
 
-% ¸÷²ãÈ¨ÖØ
+% å„å±‚æƒé‡
 %    L1 net.layers{2}.k {10} 1*12
 %    L2 net.layers{3}.k {10}{5} 1*20
 %    L3 net.layers{4}.k {100} 1*250
 %    L4 net.layers{5}.k {2} 1*100
 
 function net = CNNBackPropagation(net, batchX, batchY, opt)
-%% ¼ÆËã¸÷²ã²Ğ²î
+%% è®¡ç®—å„å±‚æ®‹å·®
 % L4    net.layers{5}.delta 2*1
 net.layers{5}.delta = - (batchY - net.layers{5}.a) .* sigmoidGradient(net.layers{5}.a);
 % L3    net.layers{4}.delta 100*1
@@ -27,9 +27,9 @@ net.layers{3}.delta = reshape( cell2mat(net.layers{4}.k)', size( cell2mat(net.la
 wL = cell(net.layers{3}.mapSize); % 5*5 cell
 wLs = cell(net.layers{3}.numMaps, 1); % 5*1 cell
 wXd = zeros(1, net.layers{2}.numMaps * net.layers{2}.mapSize);
-for mapL1_Iter = 1:net.layers{2}.numMaps % 10¸öÌØÕ÷
-    for mapL2_Iter = 1:net.layers{3}.numMaps % 5¸öÌØÕ÷
-        for i=1:net.layers{3}.mapSize % ¾í»ıºË´óĞ¡Îª5
+for mapL1_Iter = 1:net.layers{2}.numMaps % 10ä¸ªç‰¹å¾
+    for mapL2_Iter = 1:net.layers{3}.numMaps % 5ä¸ªç‰¹å¾
+        for i=1:net.layers{3}.mapSize % å·ç§¯æ ¸å¤§å°ä¸º5
         for j=1:net.layers{3}.mapSize
             if i == j
                 wL{i,j} = net.layers{3}.k{mapL1_Iter}{mapL2_Iter};
@@ -44,12 +44,12 @@ for mapL1_Iter = 1:net.layers{2}.numMaps % 10¸öÌØÕ÷
         net.layers{3}.delta( (1:25) + (mapL1_Iter-1)*25 )'* cell2mat(wLs);
 end
 net.layers{2}.delta = wXd .* tanhGradient( reshape(net.layers{2}.a', 1, net.layers{2}.numMaps * net.layers{2}.mapSize) );
-%% ¼ÆËã¸÷²ãÌİ¶È²¢¸üĞÂÈ¨ÖØ
+%% è®¡ç®—å„å±‚æ¢¯åº¦å¹¶æ›´æ–°æƒé‡
 alpha = opt.alpha;
 lambda = opt.lambda;
 
 % =================================L4======================================
-% Ìİ¶È
+% æ¢¯åº¦
 kGradL4 = net.layers{5}.delta * net.layers{4}.a'; % 2*100
 bGradL4 = net.layers{5}.delta; % 2*1
 
@@ -60,11 +60,11 @@ net.layers{5}.k{2} = kL4(2,:);
 net.layers{5}.b = net.layers{5}.b - alpha .* bGradL4';
 
 % =================================L3======================================
-% Ìİ¶È
+% æ¢¯åº¦
 kGradL3 = net.layers{4}.delta * cell2mat(net.layers{3}.a); % 100*250
 bGradL3 = net.layers{4}.delta; % 100*1
 
-for k_Iter = 1:net.layers{4}.hiddenSize % 100¸öÒş²Ø²ãÉñ¾­Ôª£¬Ã¿¸öÉñ¾­ÔªkÎª1*250
+for k_Iter = 1:net.layers{4}.hiddenSize % 100ä¸ªéšè—å±‚ç¥ç»å…ƒï¼Œæ¯ä¸ªç¥ç»å…ƒkä¸º1*250
     net.layers{4}.k{k_Iter} = net.layers{4}.k{k_Iter} - alpha .* ( kGradL3(k_Iter, :) + lambda .* net.layers{4}.k{k_Iter} );
 end
 net.layers{4}.b = net.layers{4}.b - alpha .* bGradL3'; % 1*100
@@ -98,11 +98,11 @@ end
 
 end
 
-%% sigmoidµ¼Êı
+%% sigmoidå¯¼æ•°
 function sigGrad = sigmoidGradient(x)
     sigGrad = x .* ( 1 - x );
 end
-%% tanhµ¼Êı
+%% tanhå¯¼æ•°
 function tanhGrad = tanhGradient(x)
     tanhGrad = 1 - x .* x;
 end

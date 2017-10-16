@@ -1,4 +1,4 @@
-%% ³õÊ¼»¯Ï¡Êè×Ô±àÂëÆ÷ÍøÂç²ÎÊı
+%% åˆå§‹åŒ–ç¨€ç–è‡ªç¼–ç å™¨ç½‘ç»œå‚æ•°
 function theta=SparseEncoderInitParam(visibleSize,hiddenSize)
 r  = sqrt(6) / sqrt(hiddenSize+visibleSize+1);
 

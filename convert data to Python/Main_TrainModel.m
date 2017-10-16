@@ -1,17 +1,17 @@
-%% =======================ÑµÁ·Ä£ĞÍÖ÷³ÌĞò==============================
-% ±¾³ÌĞòÁ÷³Ì£º
-% 1¡¢¶ÁÈ¡Ô­Ê¼EEGĞÅºÅ£¬Ô¤´¦ÀíµÃ100£¨Ê±Óò£©*12£¨ÆµµÀ£©µÄÌØÕ÷Æ¬¶Î£¨ReadDataÎÄ¼ş¼Ğ£©
-% (ÒÑ·ÏÆú)ÓÃÏ¡Êè×Ô±àÂëÆ÷Ñ§Ï°µÃµ½¾í»ıºËW 100*240£¨AutoEncoderÎÄ¼ş¼Ğ£©
-% 2¡¢½«Ã¿Ò»¸öÌØÕ÷Æ¬¶ÎÊäÈëCNNÖĞÑµÁ·
-% 3¡¢ÑµÁ·Íê³É£¬ÏÈÓÃÑµÁ·¼¯²âÊÔ£¬ÔÙÓÃ²âÊÔ¼¯²âÊÔ
+%% =======================è®­ç»ƒæ¨¡å‹ä¸»ç¨‹åº==============================
+% æœ¬ç¨‹åºæµç¨‹ï¼š
+% 1ã€è¯»å–åŸå§‹EEGä¿¡å·ï¼Œé¢„å¤„ç†å¾—100ï¼ˆæ—¶åŸŸï¼‰*12ï¼ˆé¢‘é“ï¼‰çš„ç‰¹å¾ç‰‡æ®µï¼ˆReadDataæ–‡ä»¶å¤¹ï¼‰
+% (å·²åºŸå¼ƒ)ç”¨ç¨€ç–è‡ªç¼–ç å™¨å­¦ä¹ å¾—åˆ°å·ç§¯æ ¸W 100*240ï¼ˆAutoEncoderæ–‡ä»¶å¤¹ï¼‰
+% 2ã€å°†æ¯ä¸€ä¸ªç‰¹å¾ç‰‡æ®µè¾“å…¥CNNä¸­è®­ç»ƒ
+% 3ã€è®­ç»ƒå®Œæˆï¼Œå…ˆç”¨è®­ç»ƒé›†æµ‹è¯•ï¼Œå†ç”¨æµ‹è¯•é›†æµ‹è¯•
 %
-% ×¢£º1¡¢Ô¤´¦ÀíÖĞÈ¥³ı¿ËÂŞÄÚ¿Ë»ı²½Öè
-%     2¡¢Õı¸ºÑù±¾±ÈÀı
+% æ³¨ï¼š1ã€é¢„å¤„ç†ä¸­å»é™¤å…‹ç½—å†…å…‹ç§¯æ­¥éª¤
+%     2ã€æ­£è´Ÿæ ·æœ¬æ¯”ä¾‹
 %
 %
 %
 % =========================================================================
-%% ÉèÖÃÂ·¾¶¼°ÒªÑµÁ·µÄÊı¾İÎÄ¼ş£¨¿Éµ÷£©
+%% è®¾ç½®è·¯å¾„åŠè¦è®­ç»ƒçš„æ•°æ®æ–‡ä»¶ï¼ˆå¯è°ƒï¼‰
 clear;clc;
 addpath data/
 % cntTrainFileName = 'kangyarui_20150709_train_1.cnt';
@@ -20,53 +20,53 @@ addpath data/
 cntTrainFileName = 'chenzhubing_20150627_train_1.cnt';
 cntTestFileName = 'chenzhubing_20150627_test_1.cnt';
 
-%% ÌáÈ¡Êı¾İ
+%% æå–æ•°æ®
 addpath ReadData/
 
-% ¶ÁÈ¡ÑµÁ·Êı¾İ
+% è¯»å–è®­ç»ƒæ•°æ®
 disp('Reading train data...');
-[rawSignalTrain, eventTrain] = readcnt(cntTrainFileName); % rawSignal 136410*36 36¸öÆµµÀµÄ²ÉÑùÖµ
+[rawSignalTrain, eventTrain] = readcnt(cntTrainFileName); % rawSignal 136410*36 36ä¸ªé¢‘é“çš„é‡‡æ ·å€¼
 [trainData, trainLabel] = ExtractData(rawSignalTrain, eventTrain);
-% ¶ÁÈ¡²âÊÔÊı¾İ
+% è¯»å–æµ‹è¯•æ•°æ®
 disp('Reading test data...');
 [rawSignalTest, eventTest] = readcnt(cntTestFileName);
 [testData, testLabel] = ExtractData(rawSignalTest, eventTest);
 
-%% Ï¡Êè×Ô±àÂëÆ÷ÌáÈ¡ÌØÕ÷ÓÃ×÷CNN¾í»ıºË
+%% ç¨€ç–è‡ªç¼–ç å™¨æå–ç‰¹å¾ç”¨ä½œCNNå·ç§¯æ ¸
 % addpath AutoEncoder/
 % 
-% % ¿Éµ÷²ÎÊı£¬Ï¡Êè×Ô±àÂëÆ÷ÑµÁ·¾í»ıºËÓÃ
-% visibleSize=1*12; % »¬¶¯¾í»ıÖ»ÑØÊ±ÓòÖá½øĞĞ£¬¹Ê¾í»ıºË¸²¸ÇÈ«²¿ÆµµÀ
-% hiddenSize = 6; % ×Ô±àÂëÆ÷Òş²Ø²ãÉñ¾­ÔªÊı£¬ÒàÎªfeature mapÊı
-% opt.numPatches=100000; % ¿Éµ÷²ÎÊı£¬Ñ¡È¡µÄÑ§Ï°Ñù±¾Êı,ĞëĞ¡ÓÚ11600*20
-% opt.sparsityParam = 0.01; % Ï¡ÊèĞÔ²ÎÊı
+% % å¯è°ƒå‚æ•°ï¼Œç¨€ç–è‡ªç¼–ç å™¨è®­ç»ƒå·ç§¯æ ¸ç”¨
+% visibleSize=1*12; % æ»‘åŠ¨å·ç§¯åªæ²¿æ—¶åŸŸè½´è¿›è¡Œï¼Œæ•…å·ç§¯æ ¸è¦†ç›–å…¨éƒ¨é¢‘é“
+% hiddenSize = 6; % è‡ªç¼–ç å™¨éšè—å±‚ç¥ç»å…ƒæ•°ï¼Œäº¦ä¸ºfeature mapæ•°
+% opt.numPatches=100000; % å¯è°ƒå‚æ•°ï¼Œé€‰å–çš„å­¦ä¹ æ ·æœ¬æ•°,é¡»å°äº11600*20
+% opt.sparsityParam = 0.01; % ç¨€ç–æ€§å‚æ•°
 % opt.lambda = 0.01; % regularization
-% opt.beta = 1; % Ï¡ÊèĞÔ³Í·£Òò×Ó
-% opt.maxIteration = 1000; % ×î´óµü´ú´ÎÊı
+% opt.beta = 1; % ç¨€ç–æ€§æƒ©ç½šå› å­
+% opt.maxIteration = 1000; % æœ€å¤§è¿­ä»£æ¬¡æ•°
 % 
-% % Ï¡Êè×Ô±àÂëÆ÷Ñ§Ñ§Ï°µÃµ½¾í»ıºË
+% % ç¨€ç–è‡ªç¼–ç å™¨å­¦å­¦ä¹ å¾—åˆ°å·ç§¯æ ¸
 % W = SparseEncoderLearn(trainFeatures, visibleSize, hiddenSize, opt);
 % W = reshape(W,size(W,1),1,visibleSize);%hiddenSize*1*12
 % clearvars -except W trainFeatures trainLabels 
-% % ÖÁ´Ë£¬ÒÑÑµÁ·µÃµ½hiddenSize¸ö1*visibleSizeµÄ¾í»ıºË£¬ÓÃÓÚCNN¾í»ıÊäÈë
+% % è‡³æ­¤ï¼Œå·²è®­ç»ƒå¾—åˆ°hiddenSizeä¸ª1*visibleSizeçš„å·ç§¯æ ¸ï¼Œç”¨äºCNNå·ç§¯è¾“å…¥
 
-%% È¡Õı¸ºÑù±¾
-% ¾­¹ıÊı¾İÔ¤´¦ÀíµÃµ½ trainData 100*20*numData ºÍ trainLabel 2*numData
-% ÏÖĞè·Ö±ğÌáÈ¡³öµÈÁ¿µÄÕı¸ºÑù±¾ÓÃ×÷CNNÑµÁ·¼¯
+%% å–æ­£è´Ÿæ ·æœ¬
+% ç»è¿‡æ•°æ®é¢„å¤„ç†å¾—åˆ° trainData 100*20*numData å’Œ trainLabel 2*numData
+% ç°éœ€åˆ†åˆ«æå–å‡ºç­‰é‡çš„æ­£è´Ÿæ ·æœ¬ç”¨ä½œCNNè®­ç»ƒé›†
 posIndex = find(trainLabel(1,:)); % 1*290
 negIndex = find(trainLabel(2,:)); % 1*11600
-numPos = size(posIndex,2); % 290¸öÕıÑù±¾
-numNeg = size(negIndex,2); % 11310¸ö¸ºÑù±¾
-randNegIndex = randperm(numNeg, numPos); % ´Ó¸ºÑù±¾ÖĞËæ»ú³éÈ¡ÓëÕıÑù±¾µÈÁ¿¸öÑµÁ·
+numPos = size(posIndex,2); % 290ä¸ªæ­£æ ·æœ¬
+numNeg = size(negIndex,2); % 11310ä¸ªè´Ÿæ ·æœ¬
+randNegIndex = randperm(numNeg, numPos); % ä»è´Ÿæ ·æœ¬ä¸­éšæœºæŠ½å–ä¸æ­£æ ·æœ¬ç­‰é‡ä¸ªè®­ç»ƒ
 
 % preallocate for speed
 inputX = zeros( size(trainData,1), size(trainData,2), 2*numPos); % 100*12*580
 inputY = zeros( size(trainLabel,1), 2*numPos); % 2*580
-for pos_Iter = 1:numPos % 290¸öÕıÑù±¾
+for pos_Iter = 1:numPos % 290ä¸ªæ­£æ ·æœ¬
     inputX(:, :, pos_Iter) =  trainData(:, :, posIndex(pos_Iter) );
     inputY(:, pos_Iter) = trainLabel(:, posIndex(pos_Iter) );
 end
-for neg_Iter = 1:numPos % 290¸ö¸ºÑù±¾
+for neg_Iter = 1:numPos % 290ä¸ªè´Ÿæ ·æœ¬
     inputX(:, :, neg_Iter + numPos) = trainData(:, :, randNegIndex(neg_Iter) );
     inputY(:, neg_Iter + numPos) = trainLabel(:, randNegIndex(neg_Iter) );
 end
@@ -75,15 +75,15 @@ inputX = permute(inputX,[3,1,2]);
 inputY = inputY';
 clearvars -except inputX inputY trainData trainLabel testData testLabel cntTrainFileName cntTestFileName
 
-% %% CNNÑµÁ·
-% % ÍøÂç½á¹¹¼ûCNNInitParam.mÎÄ¼ş
+% %% CNNè®­ç»ƒ
+% % ç½‘ç»œç»“æ„è§CNNInitParam.mæ–‡ä»¶
 % 
 % addpath CNN/
-% % Éè¶¨ÑµÁ·²ÎÊıopt£¨¿Éµ÷£©
+% % è®¾å®šè®­ç»ƒå‚æ•°optï¼ˆå¯è°ƒï¼‰
 % CNNOpt.numIteration = 3000;
 % CNNOpt.lambda = 0;
-% CNNOpt.alpha = 5e-4; % Ñ§Ï°ËÙÂÊ
-% % ³õÊ¼»¯ÍøÂç¶ÔÏó
+% CNNOpt.alpha = 5e-4; % å­¦ä¹ é€Ÿç‡
+% % åˆå§‹åŒ–ç½‘ç»œå¯¹è±¡
 % CNN.layers = {
 %     struct('type','L0', 'dimension','100x12')
 %     struct('type','L1', 'numMaps',10, 'mapSize',100, 'kernelSize',12)
@@ -92,26 +92,26 @@ clearvars -except inputX inputY trainData trainLabel testData testLabel cntTrain
 %     struct('type','L4', 'dimension',2)
 % };
 % %rng(0);
-% % ³õÊ¼»¯ÍøÂç²ÎÊı
+% % åˆå§‹åŒ–ç½‘ç»œå‚æ•°
 % CNN = CNNInitParam(CNN);
-% % ÑµÁ·ÍøÂç
+% % è®­ç»ƒç½‘ç»œ
 % CNN = CNNTrain(CNN, inputX, inputY, CNNOpt);
 % 
-% %% ²âÊÔÍøÂç
+% %% æµ‹è¯•ç½‘ç»œ
 % fprintf('Train completed.\nTesting training set...\n');
 % 
-% testTrainingSet = CNNTest(CNN, trainData, trainLabel); % ²âÊÔÑµÁ·¼¯
-% testTestSet = CNNTest(CNN, testData, testLabel); % ²âÊÔ²âÊÔ¼¯
+% testTrainingSet = CNNTest(CNN, trainData, trainLabel); % æµ‹è¯•è®­ç»ƒé›†
+% testTestSet = CNNTest(CNN, testData, testLabel); % æµ‹è¯•æµ‹è¯•é›†
 % 
-% % Ã¿´Îµü´úºóÍøÂçÔÚÑµÁ·¼¯ÉÏµÄ×¼È·ÂÊg
+% % æ¯æ¬¡è¿­ä»£åç½‘ç»œåœ¨è®­ç»ƒé›†ä¸Šçš„å‡†ç¡®ç‡g
 % figure; plot(testTrainingSet.accuracyPerTrain);
 % xlabel('Iteration'); ylabel('Output accuracy on training set');
 % 
-% % Ã¿¸öbatchºóµÄËğÊ§º¯ÊıLoss
+% % æ¯ä¸ªbatchåçš„æŸå¤±å‡½æ•°Loss
 % figure; plot(testTrainingSet.Loss);
 % xlabel('batch'); ylabel('Loss');
 % 
-% % ¼ÇÂ¼ÊµÑé²ÎÊı
+% % è®°å½•å®éªŒå‚æ•°
 % NOTE = {'normalization', true;...
 %         'kronecker', false;...
 %         'lambda', CNNOpt.lambda;...

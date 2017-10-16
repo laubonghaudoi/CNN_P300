@@ -6,7 +6,7 @@ b1 = theta(2*hiddenSize*visibleSize+1:2*hiddenSize*visibleSize+hiddenSize);
 b2 = theta(2*hiddenSize*visibleSize+hiddenSize+1:end);
 
 numData=size(X,2);
-%ÊäÈëÊı¾İ£º
+%è¾“å…¥æ•°æ®ï¼š
 %W1 100*240
 %W2 240*100
 %b1 100*1
@@ -15,17 +15,17 @@ numData=size(X,2);
 %sparsityParam 
 %beta=3
 
-%Ç°À¡
+%å‰é¦ˆ
 z2 = W1*X+repmat(b1,1,numData);
 a2 = Sigmoid(z2);%100*11600
 
 z3 = W2*a2+repmat(b2,1,numData);
 a3 = Sigmoid(z3);%240*11600
 
-%Ï¡ÊèĞÔ²ÎÊı
+%ç¨€ç–æ€§å‚æ•°
 rho = mean(a2,2);%100*1
 
-%·´À¡
+%åé¦ˆ
 delta3 = -(X-a3).*SigmoidGradient(z3);%240*11600
 delta2 = (W2'*delta3 + repmat(beta*(-sparsityParam ./ rho + (1-sparsityParam) ./(1-rho)),1,numData)).*SigmoidGradient(z2);%100*11600
 
@@ -47,11 +47,11 @@ b2grad = (1/numData)*deltab2;
 grad = [W1grad(:) ; W2grad(:) ; b1grad(:) ; b2grad(:)];
 end
 
-%% sigmoidº¯Êı
+%% sigmoidå‡½æ•°
 function sig=Sigmoid(x)
 sig=1 ./ (1 + exp(-x));
 end
-%% sigmoidº¯ÊıÌİ¶È
+%% sigmoidå‡½æ•°æ¢¯åº¦
 function sigGrad=SigmoidGradient(x)
 sigGrad=Sigmoid(x).*(1-Sigmoid(x));
 end

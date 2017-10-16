@@ -1,9 +1,9 @@
-%% CNNÇ°À¡º¯Êı
-% ÊäÈë£º
+%% CNNå‰é¦ˆå‡½æ•°
+% è¾“å…¥ï¼š
 %   X 100*12
 %   Y 2*1
 %
-% ÍøÂç²ÎÊı£º
+% ç½‘ç»œå‚æ•°ï¼š
 %   L0  dimension   '100x12'
 %   net.layers{1}
 %
@@ -19,38 +19,38 @@
 %	L4  dimension   2
 %   net.layers{5}    k{2} 1*100  b 1*2
 function net = CNNFeedforward(net, batchX, batchY)
-%% L0µ½L1Ç°À¡
-w = reshape( cell2mat(net.layers{2}.k), net.layers{2}.kernelSize, net.layers{2}.numMaps)'; % L1È¨ÖØ 10 numMaps * 12 kernels
-net.layers{2}.a = tanh_opt( bsxfun(@plus,w * batchX', net.layers{2}.b') ); % 10*100 L1¼¤»îÖµ£¬10¸ö100*1¾í»ıºóÊ±ÓòÌØÕ÷
-%% L1µ½L2Ç°À¡
-% L2Êä³öaÎª50¸ö5*1µÄÌØÕ÷Í¼
+%% L0åˆ°L1å‰é¦ˆ
+w = reshape( cell2mat(net.layers{2}.k), net.layers{2}.kernelSize, net.layers{2}.numMaps)'; % L1æƒé‡ 10 numMaps * 12 kernels
+net.layers{2}.a = tanh_opt( bsxfun(@plus,w * batchX', net.layers{2}.b') ); % 10*100 L1æ¿€æ´»å€¼ï¼Œ10ä¸ª100*1å·ç§¯åæ—¶åŸŸç‰¹å¾
+%% L1åˆ°L2å‰é¦ˆ
+% L2è¾“å‡ºaä¸º50ä¸ª5*1çš„ç‰¹å¾å›¾
 map_Iter = 1;
-% L1´«À´µÄ10¸ö100*1ÌØÕ÷Í¼£¬ĞèÒª½«Æä¾í»ı³Ø»¯Îª5*1´óĞ¡£¬¾í»ıºËÎª1*20
-for mapL1_Iter = 1:net.layers{2}.numMaps % 10¸öÌØÕ÷Í¼
-    z1 = reshape( net.layers{2}.a(mapL1_Iter, :), net.layers{3}.kernelSize, net.layers{3}.numMaps); % ½«1*100ÖØËÜÎª20*5
+% L1ä¼ æ¥çš„10ä¸ª100*1ç‰¹å¾å›¾ï¼Œéœ€è¦å°†å…¶å·ç§¯æ± åŒ–ä¸º5*1å¤§å°ï¼Œå·ç§¯æ ¸ä¸º1*20
+for mapL1_Iter = 1:net.layers{2}.numMaps % 10ä¸ªç‰¹å¾å›¾
+    z1 = reshape( net.layers{2}.a(mapL1_Iter, :), net.layers{3}.kernelSize, net.layers{3}.numMaps); % å°†1*100é‡å¡‘ä¸º20*5
     bias = net.layers{3}.b(mapL1_Iter,:); % 1*5
-    for mapL2_Iter = 1:net.layers{3}.numMaps % Ã¿¸öÌØÕ÷Í¼ÓÖ¾í»ı³Ø»¯³ö5¸öÌØÕ÷Í¼£¬¹Ê¹²50¸ö
+    for mapL2_Iter = 1:net.layers{3}.numMaps % æ¯ä¸ªç‰¹å¾å›¾åˆå·ç§¯æ± åŒ–å‡º5ä¸ªç‰¹å¾å›¾ï¼Œæ•…å…±50ä¸ª
         net.layers{3}.a{map_Iter} = tanh_opt( bsxfun(@plus, net.layers{3}.k{mapL1_Iter}{mapL2_Iter} * z1, bias(mapL2_Iter)) );
         map_Iter = map_Iter+1;
     end
 end
-%% L2µ½L3Ç°À¡
-z2 = cell2mat( net.layers{3}.a ); % 1*250 50¸ö1*5Æ¬¶Î
+%% L2åˆ°L3å‰é¦ˆ
+z2 = cell2mat( net.layers{3}.a ); % 1*250 50ä¸ª1*5ç‰‡æ®µ
 w = reshape( cell2mat(net.layers{4}.k), size(z2,2), net.layers{4}.hiddenSize )'; % 100*250
 net.layers{4}.a = sigmoid( w*z2' + net.layers{4}.b' ); % 100*1
-%% L3µ½L4Ç°À¡
+%% L3åˆ°L4å‰é¦ˆ
 w = [ net.layers{5}.k{1} ; net.layers{5}.k{2} ]; % 2*100
 net.layers{5}.a = sigmoid( w*net.layers{4}.a + net.layers{5}.b' ); % 2*1
-%% ¼ÆËãÎó²î
+%% è®¡ç®—è¯¯å·®
 net.e = batchY - net.layers{5}.a; % 2*1
 net.loss = 1/2 * (sumsqr(net.e))^2;
 end
 
-%% sigmoidº¯Êı
+%% sigmoidå‡½æ•°
 function sig = sigmoid(x)
 sig = 1 ./ ( 1 + exp(-x) );
 end
-%% tanh_optº¯Êı
+%% tanh_optå‡½æ•°
 function  f = tanh_opt(x)
     f = 1.7159 * tanh( 2/3 .*x);
 end

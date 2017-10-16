@@ -1,10 +1,10 @@
-%% CNNÑµÁ·º¯Êı
-% ÊäÈë£º
+%% CNNè®­ç»ƒå‡½æ•°
+% è¾“å…¥ï¼š
 %   X 100*12*560
 %   Y 2*560
 %   opt numIteration lambda alpha
 function net = CNNTrain(net, X, Y, opt)
-%% µü´úÑµÁ·
+%% è¿­ä»£è®­ç»ƒ
 disp('Training network...');
 sample = 1;
 net.RMSe = 0;
@@ -13,32 +13,32 @@ for iter = 1:opt.numIteration
     tic;
     disp(['Iteration ' num2str(iter) '/' num2str(opt.numIteration)]);
     
-    % ¿ªÊ¼µü´úÑµÁ·
-    randIndex = randperm(size(Y,2)); % ´òÂÒÑµÁ·Ñù±¾µÄÊäÈëË³Ğò
+    % å¼€å§‹è¿­ä»£è®­ç»ƒ
+    randIndex = randperm(size(Y,2)); % æ‰“ä¹±è®­ç»ƒæ ·æœ¬çš„è¾“å…¥é¡ºåº
     numCorrect = 0;
-    for sample_Iter = 1:size(X,3) % Ã¿¸öÑµÁ·Ñù±¾
+    for sample_Iter = 1:size(X,3) % æ¯ä¸ªè®­ç»ƒæ ·æœ¬
         batchX = X(:, :, randIndex(sample_Iter) );
         batchY = Y(:, randIndex(sample_Iter) );
-        state = Y(1, sample_Iter); % 1´ú±íP300£¬0´ú±í·ÇP300
+        state = Y(1, sample_Iter); % 1ä»£è¡¨P300ï¼Œ0ä»£è¡¨éP300
         
-        net = CNNFeedforward(net, batchX, batchY); % Ç°À¡
-        net = CNNBackPropagation(net, batchX, batchY, opt); % BP¸üĞÂÈ¨Öµ
+        net = CNNFeedforward(net, batchX, batchY); % å‰é¦ˆ
+        net = CNNBackPropagation(net, batchX, batchY, opt); % BPæ›´æ–°æƒå€¼
         
-        % ¶ÔBPºóµÄĞÂÍøÂçÇ°À¡Êä³ö¼ìÑéÊÇ·ñ·ûºÏ±êÇ©Öµ
+        % å¯¹BPåçš„æ–°ç½‘ç»œå‰é¦ˆè¾“å‡ºæ£€éªŒæ˜¯å¦ç¬¦åˆæ ‡ç­¾å€¼
         netCheck = CNNFeedforward(net, batchX, batchY);
         
-        % ¼ÇÂ¼ÍøÂçÊä³öÖµ¼°ÑµÁ·±êÇ©
+        % è®°å½•ç½‘ç»œè¾“å‡ºå€¼åŠè®­ç»ƒæ ‡ç­¾
         net.trainOutput(:, sample_Iter) = netCheck.layers{5}.a;
         net.trainY(:, sample_Iter) = batchY;
         
-        % È·¶¨Êä³öÊÇ·ñP300
+        % ç¡®å®šè¾“å‡ºæ˜¯å¦P300
         if net.trainOutput(1, sample_Iter) > net.trainOutput(2, sample_Iter)
             output = 1;
         else
             output = 0;
         end
         
-        % ²âÊÔÔÚÑµÁ·¼¯ÉÏµÄ×¼È·ÂÊ
+        % æµ‹è¯•åœ¨è®­ç»ƒé›†ä¸Šçš„å‡†ç¡®ç‡
         if state == output
             numCorrect = numCorrect + 1;
         end
@@ -46,7 +46,7 @@ for iter = 1:opt.numIteration
         net.Loss(:, sample) = netCheck.loss;
         sample = sample + 1;
     end
-    net.accuracyPerTrain(iter) = numCorrect/size(X, 3); % ¼ÇÂ¼´Ë´Îµü´úËùµÃÍøÂçÔÚÑµÁ·¼¯ÉÏµÄ×¼È·ÂÊ
+    net.accuracyPerTrain(iter) = numCorrect/size(X, 3); % è®°å½•æ­¤æ¬¡è¿­ä»£æ‰€å¾—ç½‘ç»œåœ¨è®­ç»ƒé›†ä¸Šçš„å‡†ç¡®ç‡
     fprintf('Accuracy on training set: %d%% \n', net.accuracyPerTrain(iter)*100 );
     toc;
 end

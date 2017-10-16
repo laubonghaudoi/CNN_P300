@@ -1,4 +1,4 @@
-%% ÌáÈ¡³önumPatches¸ö1*nChannelµÄ¾í»ıºËÓÃÓÚÏ¡Êè×Ô±àÂëÆ÷µÄÌØÕ÷Ñ§Ï°
+%% æå–å‡ºnumPatchesä¸ª1*nChannelçš„å·ç§¯æ ¸ç”¨äºç¨€ç–è‡ªç¼–ç å™¨çš„ç‰¹å¾å­¦ä¹ 
 function patches=SamplePatches(inputData,numPatches)
 %inputData 11600*20*12
 nFeature = size(inputData,1);%11600
@@ -8,7 +8,7 @@ nChannel = size(inputData,3);%12
 randF=randi(nFeature,numPatches,1);%numPatches*1
 randT=randi(nTime,numPatches,1);%numPatches*1
 
-patches = zeros(numPatches,nChannel);%patchesÎªnumPatches*nChannel
+patches = zeros(numPatches,nChannel);%patchesä¸ºnumPatches*nChannel
 for patch_Iter=1:numPatches
     patches(patch_Iter,:)=inputData(randF(patch_Iter),randT(patch_Iter),:);
 end
